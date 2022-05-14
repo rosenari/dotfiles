@@ -15,6 +15,7 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'kyazdani42/nvim-web-devicons'
     Plug 'romgrk/barbar.nvim'
     Plug 'akinsho/toggleterm.nvim', {'tag': 'v1.*'}
+    Plug 'dense-analysis/ale'
 
 call plug#end()
 
@@ -74,3 +75,17 @@ autocmd TermEnter term://*toggleterm#*
       \ tnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
 
 nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+
+"function search
+function ALELSPMappings()
+    let l:lsp_found=0
+    for l:linter in ale#linter#Get(&filetype) | if !empty(l:linter.lsp) | let l:lsp_found=1 | endif | endfor
+    if (l:lsp_found)
+        nnoremap <buffer> <C-]> :ALEGoToDefinition<CR>
+        nnoremap <buffer> <C-^> :ALEFindReferences<CR>
+    else
+        silent! unmap <buffer> <C-]>
+        silent! unmap <buffer> <C-^>
+    endif
+endfunction
+autocmd BufRead,FileType * call ALELSPMappings()
